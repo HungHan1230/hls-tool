@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -66,6 +67,11 @@ func downloadCmdFlags() []cli.Flag {
 			Usage:    "specify the customized \"referer\" property of the http header",
 			Required: false,
 		},
+		&cli.StringFlag{
+			Name:     "custom",
+			Usage:    "specify the custom headers of the http header",
+			Required: false,
+		},
 	}
 }
 
@@ -115,6 +121,28 @@ func downloadFromM3U8(c *cli.Context, videoName string, worker int) (err error) 
 	if origin != "" {
 		headers["Origin"] = origin
 	}
+
+	referer := c.String("referer")
+	if referer != "" {
+		headers["Referer"] = referer
+	}
+
+	customHeaders := make(map[string]string)
+	input_headers := c.String("custom")
+	if input_headers != "" {
+		log.Println("input_headers:", headers)
+
+		err = json.Unmarshal([]byte(input_headers), &customHeaders)
+		if err != nil {
+			return fmt.Errorf("failed to parse custom headers, err=%s", err)
+		}
+
+		for k, v := range customHeaders {
+			headers[k] = v
+		}
+	}
+
+	log.Println("headers:", headers)
 
 	downloadDir := c.String("download-dir")
 	outputDir := ""
