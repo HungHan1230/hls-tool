@@ -11,7 +11,7 @@ func RunFFmpeg(videoPath string) (err error) {
 	videoExtension := filepath.Ext(videoPath)
 	videoMP4Name := strings.Replace(videoPath, videoExtension, ".mp4", -1)
 
-	fmt.Printf("Run:\nvideoPath: %s\nvideoExtension: %s\nvideoMP4Name: %s\n", videoPath, videoExtension, videoMP4Name)
+	// fmt.Printf("Run:\nvideoPath: %s\nvideoExtension: %s\nvideoMP4Name: %s\n", videoPath, videoExtension, videoMP4Name)
 	
 	cmd := exec.Command("ffmpeg", "-i", videoPath, "-acodec", "copy", "-vcodec", "copy", videoMP4Name)
 
